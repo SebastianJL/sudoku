@@ -129,16 +129,42 @@ class Sudoku(object):
         """
         Reduces all cells of the given 3x3 field by the given value.
         """
-        
-        pass
-
+        for row in range(3*a,3*a+3):
+            for col in range(3*b,3*b+3):
+                self.reduce_cell(row,col,value)
     
-    def complete_sudoku(self):
-        pass
+    
+    def reduce_sudoku(self):
+        """
+        Reduces self.map_test based on the entries in self.map.
+        """
+        for row,i in enumerate(self.map):
+            for col,i in enumerate(self.map.transpose()):
+                value = self.map[row,col]
+                if value != 0:
+                    self.reduce_row(row,value)
+                    self.reduce_col(col,value)
+                    a = row%3
+                    b = col%3
+                    self.reduce_field(a,b,value)
 
 
     #Completion Algorhytmes
     #######################
+    
+    
+    def complete_cell(self):
+        """
+        Tests if a cell has a unique solution and enters the solution into
+        self.map.
+        """
+        pass
+
+    def complete_sudoku(self):
+        """
+        Completes a sudoku with some entries given.
+        """
+        pass
 
 
 #    def complete_row(self,row):
@@ -194,7 +220,14 @@ class Sudoku(object):
             if l > 10000:
                 break
 
-    def start(self):
+
+    def start_solver(self):
+        """
+        Asks for manual number input and completes the sudoku.
+        """
+        pass
+        
+    def start_game(self):
         """
         Starts an interactive game of sudoku.
         """
@@ -230,7 +263,5 @@ if __name__ == "__main__":
         [8,3,6,4,7,2,9,1,5],
         [9,4,2,1,8,5,6,7,3]
     ])
-    demo.reduce_row(0,1)
-    demo.reduce_col(0,1)
-    print demo.map_test[0]
-    print demo.map_test[:,0]
+    demo.reduce_sudoku()
+    print demo.map_test

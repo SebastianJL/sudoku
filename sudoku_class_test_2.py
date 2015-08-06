@@ -149,16 +149,104 @@ class Sudoku(object):
                     self.reduce_field(a,b,value)
 
 
-    #Completion Algorhytmes
+    #Evalutaion Algorhytmes
     #######################
-    
-    
-    def complete_cell(self):
+
+
+    def eval_row_def_cell(self,row):
         """
-        Tests if a cell has a unique solution and enters the solution into
-        self.map.
+        Evaluates if the row defines the value of one or more cells and
+        returns their values.
         """
-        pass
+        multiples = self.list_multiples(self.map_test[row].flatten())
+        definitif_values = []
+        for key,value in multiples.iteritems():
+            if value == 1 and key != 0:
+                definitif_values.append(key)
+        if definitif_values:
+            return definitif_values
+        else:
+            return False
+
+
+    def eval_col_def_cell(self,col):
+        """
+        Evaluates if the collumn defines the value of one or more cells and
+        returns their values.
+        """
+        multiples = self.list_multiples(
+            self.map_test.transpose()[col].flatten())
+        definitif_values = []
+        for key,value in multiples.iteritems():
+            if value == 1 and key != 0:
+                definitif_values.append(key)
+        if definitif_values:
+            return definitif_values
+        else:
+            return False
+
+
+    def eval_field_def_cell(self,a,b):
+        """
+        Evaluates if the field defines the value of one or more cells and
+        returns their values.
+        """
+        multiples = self.list_multiples(
+            self.map_test[3*a:3*a+3, 3*b:3*b+3].flatten())
+        definitif_values = []
+        for key,value in multiples.iteritems():
+            if value == 1 and key != 0:
+                definitif_values.append(key)
+        if definitif_values:
+            return definitif_values
+        else:
+            return False
+
+
+    def eval_exclusion_def_cell(self,row,col):
+        """
+        Evaluates if a cell's value is defined because only one value remains
+        and returns this value.
+        """
+        if self.map_test[row,col][1] == 0:
+            return self.map_test[row,col,0]
+        else:
+            return False
+
+
+    def find_containing_array(self,ndarray,value):
+        """
+        Searches through a 2d ndarray and returns the index of the first
+        array containing the value.
+        """
+        for index,array in enumerate(ndarray):
+            if value in array:
+                return index
+            
+
+
+    #Insertion and Completion Algorhytmes
+    #####################################
+
+    
+    def insert_values(self):
+        """
+        Inserts all values which can be found without further reduction.
+        """
+        #1st Insert all values which are defined by exclusion.
+        for row,i in enumerate(self.map_test):
+            for col,i in enumerate(self.map_test):
+                value = self.eval_exclusion_def_cell(row,col)
+                if value:
+                    self.map[row,col] = value
+                    self.map_test[row,col] = 9*[0]
+        #2nd Insert all values defined by rows.
+        for row,ndarray in enumerate(self.map_test):
+            values = self.eval_row_def_cell(row)
+            if values:
+                for value in values:
+                    index = self.find_containing_array(ndarray,value)
+                    
 
     def complete_sudoku(self):
         """
